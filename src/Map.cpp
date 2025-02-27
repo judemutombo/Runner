@@ -1,30 +1,24 @@
 #include "Map.h"
 #include <fstream>
-#include <string>
 
 
 Map::Map()
 {
-
+    load("resources/maps/kin.map");
 }
 
 Map::~Map()
 {
-    for (size_t i = 0; i < tiles.size(); i++){
-        for (size_t j = 0; i < tiles[i].size(); i++){
-            UnloadTexture(tiles[i][j]);
-        }
-    }
+    UnloadTexture(lines);
+    UnloadTexture(blocks);
+    UnloadTexture(voids);
+    UnloadTexture(trees);
+    UnloadTexture(squares);
 }
 
 void Map::load(std::string path)
 {
     
-    Texture2D lines;
-    Texture2D squares;
-    Texture2D blocks;
-    Texture2D voids;
-    Texture2D trees;
     Image imgL = LoadImage("resources/textures/road3.png");
     Image imgS = LoadImage("resources/textures/road4.png");
     Image imgB = LoadImage("resources/textures/blocks.png");
@@ -70,15 +64,18 @@ void Map::load(std::string path)
     UnloadImage(imgL);
     UnloadImage(imgS);
 
-    UnloadTexture(lines);
-    UnloadTexture(blocks);
-    UnloadTexture(voids);
-    UnloadTexture(trees);
-    UnloadTexture(squares);
+
+    file.close();
 }
 
 
 void Map::draw()
 {
     
+    for (size_t i = 0; i < tiles.size(); i++) { 
+        for (size_t j = 0; j < tiles[i].size(); j++) {     
+            DrawTextureEx(tiles[i][j], {100.0f * j, 100.0f * i}, 0, 1.0f, WHITE); 
+        }
+    }
+     
 }
