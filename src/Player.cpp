@@ -13,9 +13,9 @@ Player::~Player()
     delete car;
 }
 
-void Player::draw()
+void Player::draw(float t)
 {
-    car->draw();
+    car->draw(t);
 }
 
 Vector2 Player::target()
@@ -25,7 +25,7 @@ Vector2 Player::target()
 
 void Player::accelerate()
 {
-    car->accelerate();
+    car->accelerate2();
 }
 
 void Player::decelerate(bool manual)

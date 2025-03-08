@@ -12,14 +12,14 @@ int main()
     Camera2D camera = { 0 };
 
     InitWindow(screenWidth, screenHeight, "Runner");
-    SetTargetFPS(60);
     Game game;
 
-    camera.target = game.target();
     camera.offset = (Vector2){ screenWidth/2.0f, (screenHeight/2.0f) + 150.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
-
+    double previousTime = GetTime();    
+    double currentTime = 0.0;    
+    float deltaTime = 0.0f;   
 
     while (!WindowShouldClose())
     {
@@ -30,6 +30,12 @@ int main()
             game.display();
             EndMode2D();
         EndDrawing();
+        
+        camera.target = game.target();
+        currentTime = GetTime();
+        deltaTime = (float)(currentTime - previousTime);
+        previousTime = currentTime;
+        game.setDeltaTime(deltaTime);
     }
 
     CloseWindow();

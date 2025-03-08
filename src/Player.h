@@ -9,7 +9,7 @@ private:
 public:
     Player( Vector2 position);
     ~Player();
-    void draw();
+    void draw(float t);
     Vector2 target();
     void accelerate();
     void decelerate(bool manual = false);

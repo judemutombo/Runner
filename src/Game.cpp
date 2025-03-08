@@ -4,6 +4,7 @@ Game::Game()
 {
     player = new Player({52, 25});
     map = new Map();
+    deltaTime = 0.0f;
 }
 
 Game::~Game()
@@ -15,7 +16,7 @@ Game::~Game()
 void Game::display()
 {
     map->draw();
-    player->draw();
+    player->draw(deltaTime);
 }
 
 void Game::handleInput()
@@ -26,7 +27,7 @@ void Game::handleInput()
     if(IsKeyDown(KEY_LEFT_CONTROL)){
         player->accelerate();
     }
-    if(IsKeyDown(KEY_DOWN)){
+    if(IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT_ALT)){
         player->decelerate(true);
     }
     if(IsKeyDown(KEY_LEFT)){
@@ -38,4 +39,9 @@ void Game::handleInput()
 Vector2 Game::target()
 {
     return player->target();
+}
+
+void Game::setDeltaTime(float t)
+{
+    deltaTime = t;
 }

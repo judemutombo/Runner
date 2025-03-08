@@ -14,6 +14,7 @@ public:
     void display();
     void handleInput();
     Vector2 target();
+    void setDeltaTime(float t);
 private:
     // void drawMenu();
     // void drawPause();
@@ -27,7 +28,8 @@ private:
     bool gameOver = false;
     int winMenuChrono = 5;
     Player *player;
-    Map *map;
+    Map *map;  
+    float deltaTime;
 };
 
 
