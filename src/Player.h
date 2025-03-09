@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 #include "Car.h"
+#include "enums.h"
 class Player
 {
 private:
@@ -13,5 +14,6 @@ public:
     Vector2 target();
     void accelerate();
     void decelerate(bool manual = false);
+    void turn(Direction direction);
 };
 

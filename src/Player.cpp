@@ -25,10 +25,15 @@ Vector2 Player::target()
 
 void Player::accelerate()
 {
-    car->accelerate2();
+    car->accelerate();
 }
 
 void Player::decelerate(bool manual)
 {
     car->decelerate(manual);
+}
+
+void Player::turn(Direction direction)
+{
+    car->turn(direction);
 }

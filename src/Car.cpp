@@ -5,7 +5,7 @@
 
 
 Car::Car( Vector2 position) :
- position(position), rotation(0.0f), direction({1, 0})
+ position(position), rotation(0.0f), direction({-1.0, 0.0})
 {
     Image image = LoadImage("resources/textures/cars7.png");
     texture = LoadTextureFromImage(image);
@@ -30,7 +30,9 @@ void Car::draw(float t)
 {
     deltaTime = t;
     update();
-    DrawTextureEx(texture, position, rotation, 1.0f, WHITE);  
+    Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+    Vector2 origin = { (float)(texture.width/2.0), (float)(texture.height /2.0) }; 
+    DrawTexturePro(texture, source, (Rectangle){ position.x, position.y, texture.width, texture.height }, origin, rotation, WHITE);
 }
 
 Vector2 Car::target()
@@ -55,11 +57,11 @@ void Car::accelerate2()
 {
     currentTime = GetTime();
     if(0.3 <= currentTime - previousTime){
-        currentSpeed += acc;
+        currentSpeed += acc2;
         std::cout <<"speed : " << currentSpeed <<std::endl;
         if(currentSpeed > MaxSpeed) currentSpeed = MaxSpeed;
-        acc -= accController;
-        if( acc < accControllerLimit) acc = accControllerLimit;
+        acc2 -= accController;
+        if( acc2 < accControllerLimit) acc2 = accControllerLimit;
     }
 
 }
@@ -76,4 +78,42 @@ void Car::update()
     position.x =  position.x + (direction.x * currentSpeed * deltaTime);
     position.y =  position.y + ((-direction.y) * currentSpeed * deltaTime);
 
+}
+
+void Car::turn(Direction dir)
+{
+    float trn = (turnAmount * currentSpeed);
+   if(dir == Direction::LEFT){
+        if(1.0f == direction.y){
+            direction.x -= trn;
+            if(-1.0f > direction.x) direction.x = -1.0f;
+        } if(-1.0f == direction.x){
+            direction.y -= trn;
+            if(-1.0f > direction.y) direction.y = -1.0f;
+        }if(-1.0f == direction.y){
+            direction.x += trn;
+            if(1.0f < direction.x) direction.x = 1.0f;
+        } if(1.0f == direction.x){
+            direction.y += trn;
+            if(1.0f < direction.y) direction.y = 1.0f;
+        }
+   }else if (dir == Direction::RIGHT)
+   {
+    if(1.0f == direction.y){
+        direction.x += trn;
+        if(1.0f < direction.x) direction.x = 1.0f;
+    } if(-1.0f == direction.x){
+        direction.y += trn;
+        if(1.0f < direction.y) direction.y = 1.0f;
+    }if(-1.0f == direction.y){
+        direction.x -= trn;
+        if(-1.0f > direction.x) direction.x = -1.0f;
+    } if(1.0f == direction.x){
+        direction.y -= trn;
+        if(-1.0f > direction.y) direction.y = -1.0f;
+    }
+   }
+   
+   
+   std::cout <<"x : " << direction.x <<" y : " << direction.y<<std::endl;
 }

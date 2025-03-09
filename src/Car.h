@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "raymath.h"
+#include "enums.h"
 
 class Car
 {
@@ -16,11 +17,13 @@ private:
     float accTimerController;
     float accController;
     float accControllerLimit;
-    float acc = 0.19; 
+    float acc = 1.9f; 
+    float acc2 = 0.19f; 
     bool accelerating; 
     float deltaTime;
     float currentTime;
     float previousTime;  
+    float turnAmount = 0.000011764705882352941176470588;
 public:
     Car( Vector2 position);
     ~Car();
@@ -30,6 +33,7 @@ public:
     void accelerate2();
     void decelerate(bool manual = false);
     void update();
+    void turn(Direction dir);
 };
 
 

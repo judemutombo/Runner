@@ -31,8 +31,10 @@ void Game::handleInput()
         player->decelerate(true);
     }
     if(IsKeyDown(KEY_LEFT)){
+        player->turn(Direction::LEFT);
     }
     if(IsKeyDown(KEY_RIGHT)){
+        player->turn(Direction::RIGHT);
     }
 }
 
