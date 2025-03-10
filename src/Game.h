@@ -5,8 +5,11 @@
 #include <iostream>
 #include <vector>   
 #include <ctime>
+#include <memory>
+
 #include "Player.h"
 #include "Map.h"
+
 class Game{
 public:
     Game();
@@ -28,7 +31,7 @@ private:
     bool gameOver = false;
     int winMenuChrono = 5;
     Player *player;
-    Map *map;  
+    std::shared_ptr<Map> map;  
     float deltaTime;
 };
 

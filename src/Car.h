@@ -2,11 +2,24 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "enums.h"
+#include "Map.h"
+#include <memory>
 
 class Car
 {
-private:
+public:
+    Car( Vector2 position,const  std::shared_ptr<Map>& m);
+    ~Car();
+    void draw(float t);
+    Vector2 target();
+    void accelerate();
+    void accelerate2();
+    void decelerate(bool manual = false);
+    void update();
+    void turn(Direction dir);
     
+private:
+    std::shared_ptr<Map> map;
     Vector2 position;
     Texture2D texture;
     float rotation;
@@ -17,23 +30,21 @@ private:
     float accTimerController;
     float accController;
     float accControllerLimit;
-    float acc = 1.9f; 
+    float acc = 4.9f; 
     float acc2 = 0.19f; 
     bool accelerating; 
     float deltaTime;
     float currentTime;
     float previousTime;  
     float turnAmount = 0.000011764705882352941176470588;
-public:
-    Car( Vector2 position);
-    ~Car();
-    void draw(float t);
-    Vector2 target();
-    void accelerate();
-    void accelerate2();
-    void decelerate(bool manual = false);
-    void update();
-    void turn(Direction dir);
+
+    float rx;
+    float rWidth;
+
+    float ry;
+    float rHeight;
+    void updateCollisionRec();
+
 };
 
 

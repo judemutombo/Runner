@@ -2,15 +2,16 @@
 #include <iostream>
 Game::Game()
 {
-    player = new Player({52, 25});
-    map = new Map();
+    map = std::make_shared<Map>();
+    std::cout << "Game : Shared Pointer Count = " << map.use_count() << std::endl;
+    player = new Player({52, 25}, map);
     deltaTime = 0.0f;
+
 }
 
 Game::~Game()
 {
     delete player;
-    delete map;
 }
 
 void Game::display()

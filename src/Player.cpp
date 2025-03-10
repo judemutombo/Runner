@@ -1,11 +1,12 @@
 #include "Player.h"
+#include <iostream>
 
 
-
-Player::Player(Vector2 position) 
+Player::Player(Vector2 position, const  std::shared_ptr<Map>& m)  :
+    map(m)
 {
-
-    car = new Car(position);
+    std::cout << "Player : Shared Pointer Count = " << map.use_count() << std::endl;
+    car = new Car(position, m);
 }
 
 Player::~Player()
