@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "Game.h"
+#include "includes/Game.h"
 
 
 int main()
@@ -19,13 +19,13 @@ int main()
     camera.zoom = 1.0f;
     double previousTime = GetTime();    
     double currentTime = 0.0;    
-    float deltaTime = 0.0f;   
-
+    float deltaTime = 0.0f;  
     while (!WindowShouldClose())
     {
         BeginDrawing();
             ClearBackground(dark);
             BeginMode2D(camera);
+            game.checkCollision();
             game.handleInput();
             game.display();
             EndMode2D();

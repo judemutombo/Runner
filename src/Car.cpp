@@ -1,15 +1,18 @@
-#include "Car.h"
+#include "includes/Car.h"
 #include <iostream>
 #include <cmath>
-#include "functions.h"
+#include "raymath.h"
+#include <sstream>
 
-
-
-Car::Car( Vector2 position, const  std::shared_ptr<Map>& m) :
-    position(position), rotation(0.0f), direction({0.0, 1.0}), map(m), rx(0.0f), ry(0.0)
+Car::Car( Vector2 position, const  std::shared_ptr<Map>& m, int choice) :
+    position(position), rotation(0.0f), direction({1.0, 0.0}), map(m), rx(0.0), ry(0.0), choice(choice)
 {
-    std::cout << "Car : Shared Pointer Count = " << map.use_count() << std::endl;
-    Image image = LoadImage("resources/textures/cars7.png");
+
+    std::stringstream ss;
+
+    ss << "resources/textures/cars" << std::to_string(choice) << ".png";
+    
+    Image image = LoadImage(ss.str().c_str());
     texture = LoadTextureFromImage(image);
     UnloadImage(image);
     deltaTime = 0.0f;
@@ -21,10 +24,10 @@ Car::Car( Vector2 position, const  std::shared_ptr<Map>& m) :
     
     accController = 0.0005;
     accControllerLimit = 0.0005;
-    rx = position.x - (texture.width/2.0);
-    ry = position.y - (texture.height /2.0);
-    rWidth = texture.width  + abs(rotation);
-    rHeight = texture.height + abs(rotation);
+    
+    rWidth = texture.width;
+    rHeight = texture.height;
+    update();
 }
 
 Car::~Car()
@@ -61,7 +64,7 @@ void Car::accelerate()
         previousTime = currentTime;
         accTimer += accTimerController;
     }
-
+    std::cout <<position.x<<", "<<position.y <<std::endl;
 }
 
 void Car::accelerate2()
@@ -93,17 +96,15 @@ void Car::decelerate(bool manual)
 
 void Car::update()
 {
-
     rotation = (atan2(direction.x, direction.y)* 180) / PI;
-
     position.x =  position.x + (direction.x * currentSpeed * deltaTime);
     position.y =  position.y + ((-direction.y) * currentSpeed * deltaTime);
-
+    updateCollisionRec();
 }
 
 void Car::turn(Direction dir)
 {
-    float trn = (turnAmount * 12);
+    float trn = (turnAmount * currentSpeed);
    if(dir == Direction::LEFT){
         if(1.0f == direction.y){
             direction.x -= trn;
@@ -133,49 +134,29 @@ void Car::turn(Direction dir)
             if(-1.0f > direction.y) direction.y = -1.0f;
         }
     }
-    
-    updateCollisionRec();
-    
+        
   // std::cout <<"x : " << direction.x <<" y : " << direction.y<<std::endl;
 }
 
+bool Car::collidesWith(const std::shared_ptr<Car> &anotherCar)
+{
+    return false;
+}
 void Car::updateCollisionRec()
 {
-    if(135 <= rotation){
-        rWidth = (float)texture.width + (abs(180 - rotation));
-    }else if( -135 >= rotation){
-        rWidth = (float)texture.width + (abs(180 + rotation));
-    }else{
-        rWidth = (float)texture.width + abs(rotation);
-    }
 
-    if(rWidth > texture.height){
-        rWidth = texture.height;
-    }else{
-        if(135 <= rotation){
-            rx = position.x - (texture.width/2.0) - (abs(180 - rotation)/2.0);
-        }else if( -135 >= rotation){
-            rx = position.x - (texture.width/2.0) - (abs(180 + rotation)/2.0);
-        }else{
-            rx = position.x - (texture.width/2.0) - (abs(rotation)/2.0);
-        }
-    }
+    // Convert rotation to radians
+    float rad = rotation * (3.14 / 180.0f);
 
-    if(rotation > 45 && rotation < 90){
-        rHeight = texture.height - abs(rotation - 45);
-    }else if(rotation >= 90 && rotation <= 135){
-        rHeight = texture.height - abs(rotation - 135);
-    }
+    // Get texture dimensions
+    float w = texture.width;
+    float h = texture.height;
 
-    std::cout<<"rotation : "<<rotation<<std::endl;
-    std::cout<<"rHeight : "<<rHeight<<std::endl;
-    if(rHeight < texture.width){
-        rHeight = texture.width;
-    }else{
-        if(rotation > 45 && rotation < 90){
-            ry = position.y - (texture.height /2.0) + (abs(rotation - 45)/2.0);
-        }else if(rotation >= 90 && rotation <= 135){
-            ry = position.y - (texture.height /2.0) + (abs(rotation - 135)/2.0);
-        }
-    }
+    // Compute the bounding box dimensions for the rotated car
+    rWidth = std::abs(w * cos(rad)) + std::abs(h * sin(rad));
+    rHeight = std::abs(w * sin(rad)) + std::abs(h * cos(rad));
+
+    // Keep collision rectangle centered on the car
+    rx = position.x - (rWidth / 2.0f);
+    ry = position.y - (rHeight / 2.0f);
 }

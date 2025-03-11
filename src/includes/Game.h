@@ -7,8 +7,11 @@
 #include <ctime>
 #include <memory>
 
+#include "CollisionManager.h"
+#include "Racer.h"
 #include "Player.h"
 #include "Map.h"
+#include "AI.h"
 
 class Game{
 public:
@@ -18,6 +21,7 @@ public:
     void handleInput();
     Vector2 target();
     void setDeltaTime(float t);
+    void checkCollision();
 private:
     // void drawMenu();
     // void drawPause();
@@ -30,9 +34,10 @@ private:
     bool pause = false;
     bool gameOver = false;
     int winMenuChrono = 5;
-    Player *player;
     std::shared_ptr<Map> map;  
     float deltaTime;
+    std::vector<Racer*> racers;
+    CollisionManager collisionManager;
 };
 
 

@@ -1,6 +1,6 @@
-#include "Map.h"
+#include "includes/Map.h"
 #include <fstream>
-
+#include <iostream>
 
 Map::Map()
 {
@@ -52,7 +52,9 @@ void Map::load(std::string path)
                 row.push_back(lines);
             }else if(line[i] == '*'){
                 row.push_back(trees);
-
+            }else if(line[i] == 's'){
+                row.push_back(squares);
+                startingPosition.push_back(Vector2{(float)i, (float)length});
             }else{
                 row.push_back(voids);
             }
@@ -78,4 +80,9 @@ void Map::draw()
         }
     }
      
+}
+
+std::vector<Vector2> Map::getStartingPosition()
+{
+    return startingPosition;
 }
