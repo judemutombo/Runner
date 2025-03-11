@@ -43,7 +43,21 @@ void Car::draw(float t)
     Vector2 origin = { (float)(texture.width/2.0), (float)(texture.height /2.0) }; 
     
     Rectangle rec = {rx, ry, rWidth, rHeight};
-    DrawRectangleLinesEx(rec, 2, BLUE);
+    Color color;
+    if(collisionSide[0]){
+        color = RED;
+    }else if(collisionSide[1]){
+        color = YELLOW;
+    }else if(collisionSide[2]){
+        color = BLUE;
+    }else if(collisionSide[3]){
+        color = VIOLET;
+    }else{
+        color = GREEN;
+    }
+
+
+    DrawRectangleLinesEx(rec, 2, color);
     //std::cout<<rotation<<std::endl;
     DrawTexturePro(texture, source, (Rectangle){ position.x, position.y, texture.width, texture.height }, origin, rotation, WHITE);
 
@@ -64,7 +78,6 @@ void Car::accelerate()
         previousTime = currentTime;
         accTimer += accTimerController;
     }
-    std::cout <<position.x<<", "<<position.y <<std::endl;
 }
 
 void Car::accelerate2()
@@ -79,6 +92,7 @@ void Car::accelerate2()
     }
 
 }
+
 void Car::decelerate(bool manual)
 {
     if(manual){
@@ -142,6 +156,38 @@ bool Car::collidesWith(const std::shared_ptr<Car> &anotherCar)
 {
     return false;
 }
+
+void Car::handleCollision(Orientation orientation, bool state)
+{
+    switch (orientation)
+    {
+    case O_UP:
+        collisionSide[0] = state;
+        break;
+    case O_DOWN:
+        collisionSide[1] = state;
+        break;
+    case O_LEFT:
+        collisionSide[2] = state;
+        break;
+    case O_RIGHT:
+        collisionSide[3] = state;
+        break;
+    default:
+        break;
+    }
+}
+
+Vector2 Car::getPosition()
+{
+    return position;
+}
+
+Rectangle Car::getBoxCollision()
+{
+    return {rx, ry, rWidth, rHeight};
+}
+
 void Car::updateCollisionRec()
 {
 
@@ -160,3 +206,4 @@ void Car::updateCollisionRec()
     rx = position.x - (rWidth / 2.0f);
     ry = position.y - (rHeight / 2.0f);
 }
+

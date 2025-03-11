@@ -4,5 +4,21 @@
 enum Direction{
     LEFT,
     RIGHT,
-    BACK
+    BACK,
+    FRONT
+};
+
+enum Element{
+    BLOCK,
+    ROAD,
+    START,
+    TREES,
+    VOID
+};
+
+enum Orientation{
+    O_LEFT,
+    O_RIGHT,
+    O_UP,
+    O_DOWN
 };

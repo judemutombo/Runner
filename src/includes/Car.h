@@ -18,6 +18,9 @@ public:
     void update();
     void turn(Direction dir);
     bool collidesWith(const std::shared_ptr<Car> &anotherCar);
+    void handleCollision(Orientation orientation, bool state);
+    Vector2 getPosition();
+    Rectangle getBoxCollision();
     
 private:
     int choice;
@@ -46,6 +49,8 @@ private:
     float ry;
     float rHeight;
     void updateCollisionRec();
+
+    bool collisionSide[4] = {false, false, false, false};
 
 };
 

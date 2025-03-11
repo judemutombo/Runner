@@ -12,14 +12,13 @@ Game::Game()
 
     racers.push_back(new Player(playerstartpos, map, 7));
 
-    for(int i = 1; i < poss.size(); i++){
-
+  /*   for(int i = 1; i < poss.size(); i++){
         Vector2 playerstartpos = poss[i];
         playerstartpos.x *= 100;
         playerstartpos.y *= 100 + 25;
         std::cout <<playerstartpos.x <<", "<<playerstartpos.y <<std::endl;
         racers.push_back(new AI(playerstartpos, map, i));
-    }
+    } */
     deltaTime = 0.0f;
     collisionManager = CollisionManager();
 }

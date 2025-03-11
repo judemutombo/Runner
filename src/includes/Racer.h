@@ -19,7 +19,7 @@ public :
     void turn(Direction direction);
     std::shared_ptr<Car> getCar();
     bool collidesWith(const Racer& anotherRacer);
-    void handleCollision();
+    void handleCollision(Orientation orientation, bool state);
 protected:
     std::shared_ptr<Car> car;
     std::shared_ptr<Map> map;

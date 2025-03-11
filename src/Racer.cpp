@@ -40,6 +40,7 @@ bool Racer::collidesWith(const Racer& anotherRacer)
     return car.get()->collidesWith(anotherRacer.car);
 }
 
-void Racer::handleCollision()
+void Racer::handleCollision(Orientation orientation, bool state)
 {
+    return car.get()->handleCollision(orientation, state);
 }

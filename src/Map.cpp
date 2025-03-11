@@ -9,7 +9,8 @@ Map::Map()
 
 Map::~Map()
 {
-    UnloadTexture(lines);
+    UnloadTexture(linesv);
+    UnloadTexture(linesh);
     UnloadTexture(blocks);
     UnloadTexture(voids);
     UnloadTexture(trees);
@@ -19,13 +20,15 @@ Map::~Map()
 void Map::load(std::string path)
 {
     
-    Image imgL = LoadImage("resources/textures/road3.png");
+    Image imgLV = LoadImage("resources/textures/road3.png");
+    Image imgLH = LoadImage("resources/textures/road5.png");
     Image imgS = LoadImage("resources/textures/road4.png");
     Image imgB = LoadImage("resources/textures/blocks.png");
     Image imgV = LoadImage("resources/textures/void.png");
     Image imgT = LoadImage("resources/textures/tree.png");
 
-    lines = LoadTextureFromImage(imgL);
+    linesv = LoadTextureFromImage(imgLV);
+    linesh = LoadTextureFromImage(imgLH);
     squares = LoadTextureFromImage(imgS);
     blocks = LoadTextureFromImage(imgB);
     voids = LoadTextureFromImage(imgV);
@@ -44,27 +47,44 @@ void Map::load(std::string path)
             width = line.size();
         }
         std::vector<Texture2D> row;
+        std::vector<Element> row2;
         for (size_t i = 0; i < line.size(); i++)
         {
             if(line[i] == '#'){
                 row.push_back(blocks);
-            }else if(line[i] == '+'){
-                row.push_back(lines);
+                row2.push_back(BLOCK);
+            }else if(line[i] == '-'){
+                row.push_back(linesh);
+                row2.push_back(ROAD);
+            }else if(line[i] == '/'){
+                row.push_back(squares);
+                row2.push_back(ROAD);
+            }else if(line[i] == '|'){
+                row.push_back(linesv);
+                row2.push_back(ROAD);
             }else if(line[i] == '*'){
                 row.push_back(trees);
+                row2.push_back(TREES);
             }else if(line[i] == 's'){
                 row.push_back(squares);
+                row2.push_back(START);
                 startingPosition.push_back(Vector2{(float)i, (float)length});
             }else{
                 row.push_back(voids);
+                row2.push_back(VOID);
             }
         }
         tiles.push_back(row);
+        tilesElement.push_back(row2);
         length++;
     }
 
-    UnloadImage(imgL);
+    UnloadImage(imgLV);
     UnloadImage(imgS);
+    UnloadImage(imgLH);
+    UnloadImage(imgB);
+    UnloadImage(imgV);
+    UnloadImage(imgT);
 
 
     file.close();
@@ -85,4 +105,9 @@ void Map::draw()
 std::vector<Vector2> Map::getStartingPosition()
 {
     return startingPosition;
+}
+
+const std::vector<std::vector<Element>> &Map::getTilesElement()
+{
+    return tilesElement;
 }
