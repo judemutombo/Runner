@@ -5,7 +5,7 @@
 #include <sstream>
 
 Car::Car( Vector2 position, const  std::shared_ptr<Map>& m, int choice) :
-    position(position), rotation(0.0f), direction({1.0, 0.0}), map(m), rx(0.0), ry(0.0), choice(choice)
+    position(position), rotation(0.0f), direction({1.0, 0.0}), map(m), rx(0.0), ry(0.0), choice(choice), gear(DRIVE)
 {
 
     std::stringstream ss;
@@ -111,8 +111,30 @@ void Car::decelerate(bool manual)
 void Car::update()
 {
     rotation = (atan2(direction.x, direction.y)* 180) / PI;
-    position.x =  position.x + (direction.x * currentSpeed * deltaTime);
-    position.y =  position.y + ((-direction.y) * currentSpeed * deltaTime);
+
+
+    float displacementX =(direction.x * currentSpeed * deltaTime);
+    float displacementY = ((-direction.y) * currentSpeed * deltaTime);
+
+    displacementX *= gear == DRIVE ? 1 : -1;
+    displacementY *= gear == DRIVE ? 1 : -1;
+    
+    if(collisionSide[0] && (displacementY < 0)){
+        position.x =  position.x + displacementX;
+    }
+    else if(collisionSide[1] && (displacementY > 0)){
+        position.x =  position.x + displacementX;
+    }
+    else if(collisionSide[2] && (displacementX < 0)){
+        position.y =  position.y + displacementY;
+    }
+    else if(collisionSide[3] && (displacementX > 0)){
+        position.y =  position.y + displacementY;
+    }
+    else{
+        position.x =  position.x + displacementX;
+        position.y =  position.y + displacementY;
+    }
     updateCollisionRec();
 }
 
@@ -207,3 +229,7 @@ void Car::updateCollisionRec()
     ry = position.y - (rHeight / 2.0f);
 }
 
+void Car::changeGear(){
+    if (currentSpeed <= 10)
+        gear = DRIVE == gear ? REVERSE : DRIVE;
+}

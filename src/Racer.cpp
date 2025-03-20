@@ -44,3 +44,8 @@ void Racer::handleCollision(Orientation orientation, bool state)
 {
     return car.get()->handleCollision(orientation, state);
 }
+
+void Racer::changeGear()
+{
+    car.get()->changeGear();
+}

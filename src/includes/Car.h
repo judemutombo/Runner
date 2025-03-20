@@ -21,6 +21,7 @@ public:
     void handleCollision(Orientation orientation, bool state);
     Vector2 getPosition();
     Rectangle getBoxCollision();
+    void changeGear();
     
 private:
     int choice;
@@ -41,8 +42,8 @@ private:
     float deltaTime;
     float currentTime;
     float previousTime;  
-    float turnAmount = 0.000005;
-
+    float turnAmount = 0.000008;
+    GearBox gear;
     float rx;
     float rWidth;
 

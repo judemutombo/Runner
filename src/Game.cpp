@@ -56,6 +56,9 @@ void Game::handleInput()
     if(IsKeyDown(KEY_RIGHT)){
         racers[0]->turn(Direction::RIGHT);
     }
+    if(IsKeyDown(KEY_LEFT_ALT)){
+        racers[0]->changeGear();
+    }
 }
 
 Vector2 Game::target()

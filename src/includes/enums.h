@@ -22,3 +22,9 @@ enum Orientation{
     O_UP,
     O_DOWN
 };
+
+enum GearBox{
+    REVERSE,
+    DRIVE,
+    PARK
+};

@@ -25,9 +25,9 @@ int main()
         BeginDrawing();
             ClearBackground(dark);
             BeginMode2D(camera);
-            game.checkCollision();
             game.handleInput();
             game.display();
+            game.checkCollision();
             EndMode2D();
         EndDrawing();
         

@@ -13,7 +13,7 @@ public:
     void checkCollisionWithMap(Racer* racer, const std::shared_ptr<Map> &m);
     void checkCoollisionWithCars(std::vector<Racer*>& racers);
 private:
-
+    float customRound(float num);
 };
 
 #endif // COLLISIONMANAGER_H
