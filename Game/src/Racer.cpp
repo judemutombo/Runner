@@ -1,4 +1,4 @@
-#include "includes/Racer.h"
+#include "../includes/Racer.h"
 
 
 Racer::Racer(Vector2 position, const std::shared_ptr<Map> &m, int choice) :

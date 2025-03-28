@@ -1,4 +1,4 @@
-#include "includes/CollisionManager.h"
+#include "../includes/CollisionManager.h"
 #include <iostream>
 #include <cmath>
 CollisionManager::CollisionManager()
