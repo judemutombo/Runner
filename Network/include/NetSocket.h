@@ -15,6 +15,7 @@
 #endif
 
 #include <string>
+#include <string_view>
 
 #define BUFFSIZE 256
 
@@ -22,10 +23,10 @@
 class NetSocket
 {
 public:
-    NetSocket(std::string host, std::string port, bool blocking, int type);
+    NetSocket(std::string_view host, std::string_view port, bool blocking, int type);
     virtual ~NetSocket();    
     void *get_in_addr(struct sockaddr *sa);
-    int getSocketDescriptor();
+    u_int64 getSocketDescriptor();
 
 protected:
     struct sockaddr_storage remote_addr;
@@ -33,10 +34,10 @@ protected:
     struct addrinfo hints, *res, *p;
     int status;
     char ipstr[INET6_ADDRSTRLEN];
-    int sockfd;
+    u_int64 sockfd;
     int type;
-    std::string port;
-    std::string host;
+    std::string_view port;
+    std::string_view host;
     bool blocking; 
 };
 

@@ -1,11 +1,10 @@
 #include "../include/NetUdpServer.h"
 
-NetUdpServer::NetUdpServer(std::string host, std::string port, bool blocking) :
+NetUdpServer::NetUdpServer(std::string_view host, std::string_view port, bool blocking) :
     NetSocket(host, port, blocking, 2)
 {
     isBind = false;
     isListening = false;
-    acceptingClient = BACKLOG;
     int yes=1;
     setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,(char*) &yes, sizeof(int));
 
@@ -22,5 +21,23 @@ void NetUdpServer::receiving()
         fprintf(stderr, "the socket was not binded");
         exit(EXIT_FAILURE);
     }
-    std::cout << "waiting for data to read" << std::endl;
+    std::cout << "waiting for data to read to port : " << port << std::endl;
+    addr_size = sizeof remote_addr;
+    char message[BUFFSIZE];
+    int numbytes;
+    while (true)
+    {
+        if((numbytes = recvfrom(sockfd, message, BUFFSIZE-1, 0, (struct sockaddr *)&remote_addr, &addr_size)) == -1){
+            fprintf(stderr, "Couldn't receive  message from  client.\n");
+            continue;
+        }
+
+        inet_ntop(remote_addr.ss_family,get_in_addr((struct sockaddr *)&remote_addr), ipstr, sizeof ipstr);
+        printf("server: got message from %s\n", ipstr);
+
+        message[numbytes] = '\0';
+        printf("bytes received : %d \n", numbytes);
+        printf("Message from client : %s\n", message);
+    }
+    
 }

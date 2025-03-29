@@ -1,19 +1,23 @@
 #ifndef NetTcpServer_H
 #define NetTcpServer_H
 
+#include <vector>
 #include "NetSocket.h"
-#define BACKLOG 10
+#include <string_view>
+#include <iostream>
+#define BACKLOG 6
 
 class NetTcpServer : public NetSocket{
 public :
-    NetTcpServer(std::string host, std::string port, bool blocking);
+    NetTcpServer(std::string_view host, std::string_view port, bool blocking);
     bool listening();
-    virtual void accepting();
+    void accepting();
     void setAcceptingClient(int value);
 private:
     bool isBind;
     bool isListening; 
     int acceptingClient;
+    std::vector<u_int64> clients;
 };
 
 

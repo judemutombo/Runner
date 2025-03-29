@@ -3,16 +3,16 @@
 
 #include "NetSocket.h"
 #include <iostream>
-#define BACKLOG 10
+#include <string_view>
+
 
 class NetUdpServer : public NetSocket{
 public :
-    NetUdpServer(std::string host, std::string port, bool blocking);
+    NetUdpServer(std::string_view host, std::string_view port, bool blocking);
     void receiving();
 private:
     bool isBind;
     bool isListening; 
-    int acceptingClient;
 };
 
 

@@ -1,19 +1,17 @@
-#include <fstream>
 #include <iostream>
-#include "externals/nlohmann/json.hpp"
+#include "include/RunnerServer.h"
 
 using json = nlohmann::json;
 
 
 int main(int argc, char** argv){
 
-    std::ifstream f(argv[0]);
-    if (!f) {
-        std::cerr << "Error: Could not open file.\n";
-        return 1;
+    if(argc != 2){
+        std::cout << "usage example : miniserver.exe configpath";
+        exit(EXIT_FAILURE);
     }
-    json data = json::parse(f);
 
-    std::cout << data.dump(4) << std::endl;
+    RunnerServer server(argv[1]);
+
 }
 

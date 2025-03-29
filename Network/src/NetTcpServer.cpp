@@ -1,6 +1,6 @@
 #include "../include/NetTcpServer.h"
 
-NetTcpServer::NetTcpServer(std::string host, std::string port, bool blocking) :
+NetTcpServer::NetTcpServer(std::string_view host, std::string_view port, bool blocking) :
     NetSocket(host, port, blocking, 1)
 {
     isBind = false;
@@ -22,7 +22,7 @@ bool NetTcpServer::listening()
         fprintf(stderr, "unable to listen from socket : %s\n", gai_strerror(status));
         exit(EXIT_FAILURE);
     }
-    printf("server is listening to port : %s\n", port.c_str());
+    std::cout << "server is listening to port : " << port << std::endl;
     isListening = true;
     return isListening;
 }
@@ -39,22 +39,23 @@ void NetTcpServer::accepting()
     int numbytes;
     while (1)
     {
-        int incomingSocket = accept(sockfd, (struct sockaddr *)&remote_addr, &addr_size);
+        u_int64 incomingSocket = accept(sockfd, (struct sockaddr *)&remote_addr, &addr_size);
         if(incomingSocket == -1){
             fprintf(stderr, "unable to accept incomming socket\n");
             continue;
         }
+        clients.push_back(incomingSocket);
         inet_ntop(remote_addr.ss_family,get_in_addr((struct sockaddr *)&remote_addr), ipstr, sizeof ipstr);
         printf("server: got connection from %s\n", ipstr);
 
         char messages[BUFFSIZE];
         const char* notification = std::string("Message received").c_str();
         while(1){
-            if((numbytes = recv(incomingSocket, messages, BUFFSIZE , 0)) == -1){
+            if((numbytes = recv(incomingSocket, messages, BUFFSIZE - 1 , 0)) == -1){
                 fprintf(stderr, "Could't receive  message from  client.\n");
                 break;
             }
-            messages[numbytes-1] = '\0';
+            messages[numbytes] = '\0';
             printf("bytes received : %d \n", numbytes);
             printf("Message from client : %s\n", messages);
             if(send(incomingSocket, notification, strlen(notification), 0) == -1){

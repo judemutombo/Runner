@@ -1,0 +1,6 @@
+{
+    "tcphost" : "localhost",
+    "tcpport" : "5001",
+    "udphost" : "localhost",
+    "udpport" : "5002"
+}
