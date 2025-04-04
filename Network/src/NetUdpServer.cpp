@@ -1,4 +1,5 @@
 #include "../include/NetUdpServer.h"
+#include <random>
 
 NetUdpServer::NetUdpServer(std::string_view host, std::string_view port, bool blocking) :
     NetSocket(host, port, blocking, 2)
@@ -15,7 +16,7 @@ NetUdpServer::NetUdpServer(std::string_view host, std::string_view port, bool bl
     isBind = true;    
 }
 
-void NetUdpServer::receiving()
+void NetUdpServer::receiving(/* void(*fn)(std::string_view, std::string_view) */)
 {
     if(!isBind){
         fprintf(stderr, "the socket was not binded");
@@ -38,6 +39,51 @@ void NetUdpServer::receiving()
         message[numbytes] = '\0';
         printf("bytes received : %d \n", numbytes);
         printf("Message from client : %s\n", message);
+
+        if(isNewClient(remote_addr)){
+            std::string id = generateId();
+            ClientInfo info = {remote_addr, true, id};
+            std::cout << "id : " << id <<std::endl;
+            clients.push_back(info);
+        }
     }
     
+}
+
+bool NetUdpServer::isNewClient(const sockaddr_storage &newaddr)
+{
+    for(auto& client : clients){
+        if (client.addr.ss_family == newaddr.ss_family) {
+            if (client.addr.ss_family == AF_INET) {
+                // Compare IPv4 addresses and ports
+                sockaddr_in *client_addr_in = reinterpret_cast<sockaddr_in*>(&client.addr);
+                const sockaddr_in *new_addr_in = reinterpret_cast<const sockaddr_in*>(&newaddr);
+                if (client_addr_in->sin_addr.s_addr == new_addr_in->sin_addr.s_addr &&
+                    client_addr_in->sin_port == new_addr_in->sin_port) {
+                    return false;  // Found an existing client, so it's not new
+                }
+            } 
+        }
+    }
+    return true;
+}
+
+std::string NetUdpServer::generateId()
+{
+
+    static std::random_device dev;
+    static std::mt19937 rng(dev());
+
+    std::uniform_int_distribution<int> dist(0, 35);
+
+    const char *v = "0123456789abcdefghijklmnopqrstuvwxyz";
+    const bool dash[] = { 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0 };
+
+    std::string res;
+    for (int i = 0; i < 16; i++) {
+        if (dash[i]) res += "-";
+        res += v[dist(rng)];
+        res += v[dist(rng)];
+    }
+    return res;
 }

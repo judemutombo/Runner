@@ -1,4 +1,5 @@
 #include "../include/NetTcpServer.h"
+#include "NetTcpServer.h"
 
 NetTcpServer::NetTcpServer(std::string_view host, std::string_view port, bool blocking) :
     NetSocket(host, port, blocking, 1)
@@ -74,4 +75,8 @@ void NetTcpServer::accepting()
 void NetTcpServer::setAcceptingClient(int value)
 {
     acceptingClient = value;
+}
+std::string NetTcpServer::generateId()
+{
+    return "";
 }

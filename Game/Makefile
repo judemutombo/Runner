@@ -367,11 +367,27 @@ rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst 
 SRC_DIR = src
 OBJ_DIR = obj
 
-# Define all object files from source files
+# Existing SRC definition
 SRC = $(call rwildcard, *.cpp, *.h)
+
+# Directories for external files
+EXTERNAL_INCLUDE_DIR = C:/Users/MATHUSALEM/Documents/C++/Runner/Network/include
+EXTERNAL_SRC_DIR =C:/Users/MATHUSALEM/Documents/C++/Runner/Network/src
+
+# Add external .cpp and .h files
+SRC += $(wildcard $(EXTERNAL_SRC_DIR)/*.cpp)  # Add .cpp files from external src directory
+INCLUDE_DIRS += $(EXTERNAL_INCLUDE_DIR)  # Add the external include directory
+
+# Object files - Assuming your object directory is 'obj' and source directory is 'src'
 #OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OBJS := $(wildcard src/*.cpp)
 
+# To create object files from external .cpp files, you can add specific paths:
+EXTERNAL_OBJS := $(wildcard $(EXTERNAL_SRC_DIR)/*.cpp)
+
+# Add the external include path to the compiler flags
+CFLAGS += -I$(EXTERNAL_INCLUDE_DIR)
+CFLAGS +=  -std=c++17
 
 # For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)

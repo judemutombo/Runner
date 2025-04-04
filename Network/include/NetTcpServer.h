@@ -13,6 +13,8 @@ public :
     bool listening();
     void accepting();
     void setAcceptingClient(int value);
+    std::string generateId() override;
+
 private:
     bool isBind;
     bool isListening; 

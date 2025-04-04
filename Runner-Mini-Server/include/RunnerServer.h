@@ -17,7 +17,7 @@ public :
     void setTcp(std::string_view host, std::string_view port);
     void setUdp(std::string_view host, std::string_view port);
     void newPlayer(u_int64 socket);
-    void talk(u_int64 socket, std::string_view message);
+    void receivePosition(u_int64 socket, std::string_view message);
 
 private :
     std::string_view tcphost;

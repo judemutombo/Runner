@@ -20,13 +20,14 @@
 #define BUFFSIZE 256
 
 
-class NetSocket
+class NetSocket 
 {
 public:
     NetSocket(std::string_view host, std::string_view port, bool blocking, int type);
     virtual ~NetSocket();    
     void *get_in_addr(struct sockaddr *sa);
     u_int64 getSocketDescriptor();
+    virtual std::string generateId() = 0;
 
 protected:
     struct sockaddr_storage remote_addr;

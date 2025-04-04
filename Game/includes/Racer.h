@@ -6,6 +6,7 @@
 #include "enums.h"
 #include "Map.h"
 #include <memory>
+#include <string_view>
 
 
 class Racer{
@@ -21,10 +22,12 @@ public :
     bool collidesWith(const Racer& anotherRacer);
     void handleCollision(Orientation orientation, bool state);
     void changeGear();
+    void getId(std::string_view c_id);
 protected:
     std::shared_ptr<Car> car;
     std::shared_ptr<Map> map;
     bool isColliding;
+    std::string id;
 };
 
 #endif // RACER_H

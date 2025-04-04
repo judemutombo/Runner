@@ -49,7 +49,7 @@ void RunnerServer::newPlayer(u_int64 socket)
     tcp_sockets.push_back(socket);
 }
 
-void RunnerServer::talk(u_int64 socket, std::string_view message)
+void RunnerServer::receivePosition(u_int64 socket, std::string_view message)
 {
 
 }

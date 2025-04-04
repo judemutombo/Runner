@@ -49,3 +49,8 @@ void Racer::changeGear()
 {
     car.get()->changeGear();
 }
+
+void Racer::getId(std::string_view c_id)
+{
+    id = static_cast<std::string>(c_id);
+}
