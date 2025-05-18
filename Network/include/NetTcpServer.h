@@ -5,6 +5,8 @@
 #include "NetSocket.h"
 #include <string_view>
 #include <iostream>
+#include <string.h>
+
 #define BACKLOG 6
 
 class NetTcpServer : public NetSocket{
@@ -19,7 +21,7 @@ private:
     bool isBind;
     bool isListening; 
     int acceptingClient;
-    std::vector<u_int64> clients;
+    std::vector<int> clients;
 };
 
 

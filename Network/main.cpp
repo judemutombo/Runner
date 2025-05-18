@@ -1,9 +1,13 @@
-#include "include/NetServer.h"
-
+#include "include/NetTcpServer.h"
+#include "include/GamePacket.h"
+#include <iostream>
 
 int main(){
 
-    NetServer server("localhost", "5001", false);
-    server.listening();
-    server.accepting();
+    GamePacket pkt;
+    pkt.push(45);
+    pkt.push(23.4);
+    pkt.push("hello");
+
+    std::cout << pkt.getSequence() << std::endl;
 }

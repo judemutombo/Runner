@@ -28,7 +28,15 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 file(GLOB SOURCES "./*.cpp" "src/*.cpp" "src/**/*.cpp")
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+#external dependencies
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../Network/include)
+file(GLOB NET_SOURCES  "./../Network/src/*.cpp" )
+
+add_executable(${PROJECT_NAME} ${SOURCES} ${NET_SOURCES})
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/"
+)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 
@@ -38,9 +46,11 @@ if (${PLATFORM} STREQUAL "Web")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1")
 endif()
 
+
 # Checks if OSX and links appropriate frameworks (Only required on MacOS)
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} "-framework IOKit")
     target_link_libraries(${PROJECT_NAME} "-framework Cocoa")
     target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
 endif()
+

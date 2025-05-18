@@ -44,12 +44,12 @@ void RunnerServer::setUdp(std::string_view host, std::string_view port)
     udp_thread = std::thread(&NetUdpServer::receiving, udpserver);
 }
 
-void RunnerServer::newPlayer(u_int64 socket)
+void RunnerServer::newPlayer(int socket)
 {
     tcp_sockets.push_back(socket);
 }
 
-void RunnerServer::receivePosition(u_int64 socket, std::string_view message)
+void RunnerServer::receivePosition(int socket, std::string_view message)
 {
 
 }

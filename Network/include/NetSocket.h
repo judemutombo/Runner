@@ -3,7 +3,6 @@
 
 #ifdef _WIN32
     #include <winsock2.h>
-    #include <stdio.h>
     #include <Ws2tcpip.h>
 #endif
 
@@ -12,8 +11,11 @@
     #include <sys/socket.h>
     #include <netdb.h>
     #include <fcntl.h>
+    #include <unistd.h>
+    #include <arpa/inet.h>
 #endif
 
+#include <stdio.h>
 #include <string>
 #include <string_view>
 
@@ -26,7 +28,7 @@ public:
     NetSocket(std::string_view host, std::string_view port, bool blocking, int type);
     virtual ~NetSocket();    
     void *get_in_addr(struct sockaddr *sa);
-    u_int64 getSocketDescriptor();
+    int getSocketDescriptor();
     virtual std::string generateId() = 0;
 
 protected:
@@ -35,7 +37,7 @@ protected:
     struct addrinfo hints, *res, *p;
     int status;
     char ipstr[INET6_ADDRSTRLEN];
-    u_int64 sockfd;
+    int sockfd;
     int type;
     std::string_view port;
     std::string_view host;

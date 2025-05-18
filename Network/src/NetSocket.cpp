@@ -1,5 +1,5 @@
 #include "../include/NetSocket.h"
-#include "NetSocket.h"
+#include <string.h>
 
 NetSocket::NetSocket(std::string_view host, std::string_view port, bool blocking, int type) :
     host(host), port(port), blocking(blocking), type(type)
@@ -68,7 +68,7 @@ void *NetSocket::get_in_addr(sockaddr *sa)
         return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-u_int64 NetSocket::getSocketDescriptor()
+int NetSocket::getSocketDescriptor()
 {
     return sockfd;
 }

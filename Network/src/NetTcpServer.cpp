@@ -1,5 +1,4 @@
 #include "../include/NetTcpServer.h"
-#include "NetTcpServer.h"
 
 NetTcpServer::NetTcpServer(std::string_view host, std::string_view port, bool blocking) :
     NetSocket(host, port, blocking, 1)
@@ -40,7 +39,7 @@ void NetTcpServer::accepting()
     int numbytes;
     while (1)
     {
-        u_int64 incomingSocket = accept(sockfd, (struct sockaddr *)&remote_addr, &addr_size);
+        int incomingSocket = accept(sockfd, (struct sockaddr *)&remote_addr, &addr_size);
         if(incomingSocket == -1){
             fprintf(stderr, "unable to accept incomming socket\n");
             continue;

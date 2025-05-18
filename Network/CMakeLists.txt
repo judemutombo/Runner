@@ -4,7 +4,7 @@ project(networking VERSION 1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-file(GLOB NETLIB_SOURCES "src/*.cpp")
+file(GLOB NETLIB_SOURCES "./*.cpp" "src/*.cpp")
 add_library(NetLib STATIC ${NETLIB_SOURCES})
 
 

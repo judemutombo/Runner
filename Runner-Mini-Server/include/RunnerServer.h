@@ -16,8 +16,8 @@ public :
     ~RunnerServer();
     void setTcp(std::string_view host, std::string_view port);
     void setUdp(std::string_view host, std::string_view port);
-    void newPlayer(u_int64 socket);
-    void receivePosition(u_int64 socket, std::string_view message);
+    void newPlayer(int socket);
+    void receivePosition(int socket, std::string_view message);
 
 private :
     std::string_view tcphost;
@@ -32,7 +32,7 @@ private :
     NetUdpServer* udpserver;
     bool raceStarted;
 
-    std::vector<u_int64> tcp_sockets;
+    std::vector<int> tcp_sockets;
 
     std::thread tcp_thread;
     std::thread udp_thread;

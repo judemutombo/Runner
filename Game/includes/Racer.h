@@ -7,6 +7,8 @@
 #include "Map.h"
 #include <memory>
 #include <string_view>
+#include "../../Network/include/NetUdpClient.h"
+#include "../../Network/include/packet.h"
 
 
 class Racer{
@@ -23,11 +25,13 @@ public :
     void handleCollision(Orientation orientation, bool state);
     void changeGear();
     void getId(std::string_view c_id);
+    void sendPosition();
 protected:
     std::shared_ptr<Car> car;
     std::shared_ptr<Map> map;
     bool isColliding;
     std::string id;
+    NetUdpClient client;
 };
 
 #endif // RACER_H
