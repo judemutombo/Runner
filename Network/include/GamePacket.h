@@ -15,6 +15,7 @@
 #include <type_traits>
 #include <stdexcept>
 #include <iostream>
+#include <any>
 #include "packet.h"
 
 class GamePacket
@@ -30,7 +31,7 @@ public:
     template<typename T> void push(const T& value);
     void push(const char* str);
     void push(const std::string& str);
-    template<typename T> T pop();
+    std::any pop();
     char* getSequence();
     char* getTypeSequence();
     
@@ -38,12 +39,14 @@ private:
     packet pkt;
     uint32_t floatToNet(float f);
     float netToFloat(uint32_t i);
+    uint64_t doubleToNet(double d);
+    double netToDouble(uint64_t i);
     size_t offset = 0;
     char* sequence = nullptr;
     char* typeSequence = nullptr;
     template<typename T> void pushTypeSequence(const T& value);
     template<typename T> void pushSequence(const T& value);
-    void popSequence();
+    size_t popSequence();
     uint16_t limit = 11;
 };
 #endif
@@ -64,6 +67,9 @@ inline void GamePacket::push(const T& value){
     if constexpr (std::is_same<T, float>::value) {
         uint32_t net = floatToNet(value);
         memcpy(pkt.messageData + offset, &net, sizeof(net));
+    }else if constexpr (std::is_same<T, double>::value) {
+        uint64_t net = doubleToNet(value);
+        memcpy(pkt.messageData + offset, &net, sizeof(net));
     } else if constexpr (sizeof(T) == 2) {
         uint16_t net = htons(value);
         memcpy(pkt.messageData + offset, &net, sizeof(net));
@@ -78,13 +84,10 @@ inline void GamePacket::push(const T& value){
         memcpy(pkt.messageData + offset, &value, sizeof(T));
     }
     offset += sizeof(T);
+    uint32_t net = htonl(offset);
+    pkt.messageOffset = net;
     pushSequence(value);
     pushTypeSequence(value);
-}
-
-template<typename T> 
-inline T GamePacket::pop(){
-    return 4;
 }
 
 template <typename T>
@@ -122,7 +125,7 @@ inline void GamePacket::pushTypeSequence(const T &value)
     }
 
     typeSequence[len + 1] = '\0';
-    memcpy(pkt.typesequence, typeSequence, 16);
+    pkt.typesequence = typeSequence;
     
 }
 
@@ -168,4 +171,5 @@ inline void GamePacket::pushSequence(const T& value) {
     else {
         throw std::runtime_error("Unknown type in pushSequence");
     }
+    pkt.sequence = sequence;
 }
