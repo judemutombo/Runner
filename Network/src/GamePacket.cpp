@@ -1,29 +1,33 @@
 #include "../include/GamePacket.h"
 
-
-GamePacket::GamePacket()
+GamePacket::GamePacket() :
+    itemCount(0)
 {
+    pkt.itemCount = htons(itemCount);
 }
 
 GamePacket::GamePacket(const packet &p)
 {
     pkt = p;
+    itemCount = ntohs(p.itemCount);
+    memcpy(sequence, pkt.sequence, sizeof(pkt.sequence));
+    memcpy(typeSequence, pkt.typeSequence, sizeof(pkt.typeSequence));
+    offset = ntohs(pkt.messageOffset);
+
 }
 
 GamePacket::~GamePacket()
 {
-    free(sequence);
-    free(typeSequence);
 }
 
 void GamePacket::setSenderID(const char *senderId)
 {
-    memcpy(pkt.senderId, senderId, 16);
+    memcpy(pkt.senderId, senderId, MAX_SENDER_ID_SIZE);
 }
 
 void GamePacket::setMessageType(const char *messageType)
 {
-    memcpy(pkt.messageType, messageType, 8);
+    memcpy(pkt.messageType, messageType, MAX_TYPE_SIZE);
 }
 
 packet GamePacket::getPacket()
@@ -34,12 +38,15 @@ packet GamePacket::getPacket()
 void GamePacket::setPaket(const packet &p)
 {
     pkt = p;
+    itemCount = ntohs(p.itemCount);
+    memcpy(sequence, pkt.sequence, sizeof(pkt.sequence));
+    memcpy(typeSequence, pkt.typeSequence, sizeof(pkt.typeSequence));
+    offset = ntohs(pkt.messageOffset);
 }
 
 void GamePacket::push(const char *str){
 
-    size_t l = typeSequence ? strlen(typeSequence) : 0;
-    if(l >= limit){
+    if(itemCount >= limit){
         throw std::overflow_error("typeSequence overflow when pushing string : " + std::string(str));
     }
 
@@ -49,10 +56,13 @@ void GamePacket::push(const char *str){
     }
     memcpy(pkt.messageData + offset, str, len);
     offset += len;
-    uint32_t net = htonl(offset);
-    pkt.messageOffset = net;
+    pkt.messageOffset = htonl(offset);
     pushSequence(str);
     pushTypeSequence(str);
+    
+    itemCount++;
+    pkt.itemCount = htons(itemCount);
+    pkt.packetLength = htons(sizeof(pkt));
 }
 
 void GamePacket::push(const std::string &str)
@@ -61,12 +71,12 @@ void GamePacket::push(const std::string &str)
 }
 
 std::any GamePacket::pop(){
-    if (strlen(typeSequence) == 0) {
+    if (itemCount == 0) {
         throw std::runtime_error("No types left to pop.");
     }
 
-    char type = typeSequence[strlen(typeSequence) - 1];
-    typeSequence[strlen(typeSequence) - 1] = '\0'; // Remove last type
+    char type = typeSequence[--itemCount];
+    typeSequence[itemCount] = 0; 
     size_t dataSize = popSequence(); 
     offset -= dataSize; 
 
@@ -102,23 +112,38 @@ std::any GamePacket::pop(){
         return std::any(value);
     }
 
-    throw std::runtime_error("Unsupported type in GamePacket::pop");
+    std::string error {"Unsupported type("};
+    error += type;
+    error += ") in GamePacket::pop";
+    throw std::runtime_error(error);
 }
 
-char* GamePacket::getSequence()
+std::string GamePacket::getSequence()
 {
-    return sequence;
+    std::string s{""};
+    for (size_t i = 0; i < itemCount; i++)
+    {
+        s += std::to_string(sequence[i]);
+    }
+    
+    return s;
 }
 
-char *GamePacket::getTypeSequence(){
-    return typeSequence ? typeSequence : nullptr;
+std::string GamePacket::getTypeSequence(){
+    std::string s{""};
+    for (size_t i = 0; i < itemCount; i++)
+    {
+        s += typeSequence[i];
+    }
+    
+    return s;
 }
 
 uint32_t GamePacket::floatToNet(float f)
 {
     uint32_t i;
     memcpy(&i, &f, sizeof(float));
-    return htonl(i); // convert bits to network byte order
+    return htonl(i); 
 }
 
 float GamePacket::netToFloat(uint32_t i)
@@ -135,7 +160,7 @@ uint64_t GamePacket::doubleToNet(double d)
     memcpy(&i, &d, sizeof(double));
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    // Convert to network byte order (big endian)
+    
     i = ((uint64_t)htonl(i & 0xFFFFFFFF) << 32) | htonl(i >> 32);
 #endif
 
@@ -145,7 +170,7 @@ uint64_t GamePacket::doubleToNet(double d)
 double GamePacket::netToDouble(uint64_t i)
 {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    // Convert back from network byte order
+    
     i = ((uint64_t)ntohl(i & 0xFFFFFFFF) << 32) | ntohl(i >> 32);
 #endif
 
@@ -157,25 +182,7 @@ double GamePacket::netToDouble(uint64_t i)
 size_t GamePacket::popSequence()
 {
     size_t size;
-    if(sequence[strlen(sequence) - 1] == ',' ){
-        size = 0;
-        int max = strlen(sequence) - 2;
-        int counter = 0;
-        while(sequence[max--] != ','){
-            float val = ((size) / (10 * counter == 0 ? 1 : (10 * counter))) + (sequence[max + 1] - '0');
-            if(counter != 0){
-                size = (size_t) (val * (10 * counter));
-            }else{
-                size = (size_t) val;
-            }
-            ++counter;
-        }
-        std::cout << "size : " << size << std::endl;
-        sequence[++max] = '\0';
-    }else{
-        size = sequence[strlen(sequence) - 1] - '0';
-        sequence[strlen(sequence) - 1] = '\0';
-    }
+    size = sequence[itemCount];
 
     return size;
 }

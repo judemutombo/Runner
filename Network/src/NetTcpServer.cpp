@@ -1,5 +1,6 @@
 #include "../include/NetTcpServer.h"
 
+
 NetTcpServer::NetTcpServer(std::string_view host, std::string_view port, bool blocking) :
     NetSocket(host, port, blocking, 1)
 {
@@ -27,7 +28,7 @@ bool NetTcpServer::listening()
     return isListening;
 }
 
-void NetTcpServer::accepting()
+void NetTcpServer::accepting(const std::function<void(int)>& callback)
 {
     if(!isBind || !isListening){
         fprintf(stderr, "the socket is either not binded or not listening");
@@ -48,7 +49,8 @@ void NetTcpServer::accepting()
         inet_ntop(remote_addr.ss_family,get_in_addr((struct sockaddr *)&remote_addr), ipstr, sizeof ipstr);
         printf("server: got connection from %s\n", ipstr);
 
-        char messages[BUFFSIZE];
+        callback(incomingSocket);
+        /* char messages[BUFFSIZE];
         const char* notification = std::string("Message received").c_str();
         while(1){
             if((numbytes = recv(incomingSocket, messages, BUFFSIZE - 1 , 0)) == -1){
@@ -62,12 +64,12 @@ void NetTcpServer::accepting()
                 perror("could not send message to socket\n");
                 break;
             } 
-        }
-#ifdef _WIN32
+        } */
+/* #ifdef _WIN32
         closesocket(incomingSocket);
 #else
         close(incomingSocket);
-#endif
+#endif */
     }
 }
 
@@ -75,7 +77,18 @@ void NetTcpServer::setAcceptingClient(int value)
 {
     acceptingClient = value;
 }
+
 std::string NetTcpServer::generateId()
 {
     return "";
+}
+
+bool NetTcpServer::sendPacket(const packet& pkt, int socket)
+{
+    
+    if(send(socket,reinterpret_cast<const char*>(&pkt), sizeof(pkt), 0) == -1){
+        perror("could not send message to socket\n");
+        return false;
+    } 
+    return true;
 }

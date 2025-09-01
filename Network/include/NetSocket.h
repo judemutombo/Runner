@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string>
 #include <string_view>
+#include "GamePacket.h"
 
 #define BUFFSIZE 256
 
@@ -30,6 +31,7 @@ public:
     void *get_in_addr(struct sockaddr *sa);
     int getSocketDescriptor();
     virtual std::string generateId() = 0;
+    virtual bool sendPacket(const packet& pkt, int socket) = 0;
 
 protected:
     struct sockaddr_storage remote_addr;

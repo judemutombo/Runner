@@ -87,3 +87,8 @@ std::string NetUdpServer::generateId()
     }
     return res;
 }
+
+bool NetUdpServer::sendPacket(const packet& pkt, int socket)
+{
+    return false;
+}

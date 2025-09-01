@@ -33,7 +33,13 @@ void RunnerServer::setTcp(std::string_view host, std::string_view port)
         std::cerr << "server unable to listen";
         exit(EXIT_FAILURE);
     }
-    tcp_thread = std::thread(&NetTcpServer::accepting, tcpserver);
+    tcp_thread = std::thread(
+        &NetTcpServer::accepting, 
+        tcpserver,  
+        [this](int socket) { 
+            newPlayer(socket); 
+        }
+    );
 }
 
 void RunnerServer::setUdp(std::string_view host, std::string_view port)
@@ -46,10 +52,20 @@ void RunnerServer::setUdp(std::string_view host, std::string_view port)
 
 void RunnerServer::newPlayer(int socket)
 {
+    std::cout << "new player " << std::endl;
     tcp_sockets.push_back(socket);
+
+    GamePacket pkt;
+    pkt.push(7);
+    pkt.push(23.4f);
+    pkt.push("hello gain summarize");
+    pkt.push(2.4);
+    pkt.push(-78);
+
+    tcpserver->sendPacket(pkt.getPacket(), socket);
 }
 
 void RunnerServer::receivePosition(int socket, std::string_view message)
 {
-
+    
 }

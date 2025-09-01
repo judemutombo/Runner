@@ -17,6 +17,7 @@
 #include <iostream>
 #include <any>
 #include "packet.h"
+#include "packetConfig.h"
 
 class GamePacket
 {
@@ -32,8 +33,8 @@ public:
     void push(const char* str);
     void push(const std::string& str);
     std::any pop();
-    char* getSequence();
-    char* getTypeSequence();
+    std::string getSequence();
+    std::string getTypeSequence();
     
 private:
     packet pkt;
@@ -42,25 +43,25 @@ private:
     uint64_t doubleToNet(double d);
     double netToDouble(uint64_t i);
     size_t offset = 0;
-    char* sequence = nullptr;
-    char* typeSequence = nullptr;
+    uint16_t sequence[MAX_SEQ_SIZE];
+    char typeSequence[MAX_TYPE_SEQ_SIZE];
+    size_t itemCount;
     template<typename T> void pushTypeSequence(const T& value);
     template<typename T> void pushSequence(const T& value);
     size_t popSequence();
-    uint16_t limit = 11;
+    uint16_t limit = LIMIT_TYPE_SEQ;
 };
-#endif
 
 template<typename T> 
 inline void GamePacket::push(const T& value){
     static_assert(std::is_arithmetic<T>::value, "Only arithmetic types are supported");
 
-    if (offset + sizeof(T) > sizeof(pkt.messageData)) {
+    if (offset + sizeof(T) > MAX_MESSAGE_SIZE) {
         throw std::overflow_error("Packet messageData overflow when pushing arithmetic : " + std::to_string(value));
     }
 
-    size_t len = typeSequence ? strlen(typeSequence) : 0;
-    if(len >= limit){
+    
+    if(itemCount >= limit){
         throw std::overflow_error("typeSequence overflow when pushing arithmetic : " + std::to_string(value));
     }
     
@@ -84,57 +85,51 @@ inline void GamePacket::push(const T& value){
         memcpy(pkt.messageData + offset, &value, sizeof(T));
     }
     offset += sizeof(T);
-    uint32_t net = htonl(offset);
-    pkt.messageOffset = net;
+    pkt.messageOffset = htonl(offset);
     pushSequence(value);
     pushTypeSequence(value);
+
+    itemCount++;
+    pkt.itemCount = htons(itemCount);
+    pkt.packetLength = htons(sizeof(pkt));
 }
 
 template <typename T>
 inline void GamePacket::pushTypeSequence(const T &value)
-{
-    size_t len = typeSequence ? strlen(typeSequence) : 0;
-
-    // Allocate or reallocate to hold one more character + null terminator
-    char* newSequence = (char*) realloc(typeSequence, sizeof(char) * (len + 2));
-    if (!newSequence) {
-        throw std::runtime_error("Memory allocation failed");
-        return;
-    }
-    typeSequence = newSequence;
-
+{    
     if constexpr (std::is_same<T, int>::value){
-        typeSequence[len] = 'I';
+        typeSequence[itemCount] = 'I';
+        pkt.typeSequence[itemCount] = 'I';
     }else if constexpr (std::is_same<T, float>::value){
-        typeSequence[len] = 'F';
+        typeSequence[itemCount] = 'F';
+        pkt.typeSequence[itemCount] = 'F';
     }else if constexpr (std::is_same<T, double>::value){
-        typeSequence[len] = 'D';
+        typeSequence[itemCount] = 'D';
+        pkt.typeSequence[itemCount] = 'D';
     }else if constexpr (std::is_same<T, bool>::value){
-        typeSequence[len] = 'B';
+        typeSequence[itemCount] = 'B';
+         pkt.typeSequence[itemCount] = 'B';
     }else if constexpr (
         std::is_same<T, char*>::value ||
         std::is_same<T, const char*>::value ||
         std::is_same<T, char[]>::value ||
         std::is_same<T, const char[]>::value
     ){
-        typeSequence[len] = 'S';
+        typeSequence[itemCount] = 'S';
+        pkt.typeSequence[itemCount] = 'S';
     }else if constexpr (std::is_same<T, char>::value){
-        typeSequence[len] = 'C';
+        typeSequence[itemCount] = 'C';
+        pkt.typeSequence[itemCount] = 'C';
     }else{
-        typeSequence[len] = '?'; 
+        typeSequence[itemCount] = '?'; 
+        pkt.typeSequence[itemCount] = '?';
     }
-
-    typeSequence[len + 1] = '\0';
-    pkt.typesequence = typeSequence;
-    
 }
 
 template <typename T>
 inline void GamePacket::pushSequence(const T& value) {
-    size_t len = sequence ? strlen(sequence) : 0;
-    char* newSequence;
 
-    
+ 
     if constexpr (
         std::is_same_v<T, float> ||
         std::is_same_v<T, int> ||
@@ -143,33 +138,19 @@ inline void GamePacket::pushSequence(const T& value) {
         std::is_same_v<T, double>
     ) {
         
-        newSequence = (char*) realloc(sequence, len + 2);
-        if (!newSequence) {
-            throw std::runtime_error("Memory allocation failed");
-        }
-        sequence = newSequence;
-        sequence[len] = std::to_string(sizeof(T)).c_str()[0]; 
-        sequence[len + 1] = '\0';
+        sequence[itemCount] = sizeof(T); 
+        pkt.sequence[itemCount] = htons(sizeof(T)); 
     }
     
     else if constexpr (
         std::is_same_v<T, const char*> || std::is_same_v<T, char*>
     ) {
-        size_t str_len = strlen(value);
-        std::string marker = "," + std::to_string(str_len) + ","; 
-        size_t marker_len = marker.length();
+        sequence[itemCount] = strlen(value);
+        pkt.sequence[itemCount] = htons(strlen(value));
 
-        newSequence = (char*) realloc(sequence, len + marker_len + 1);
-        if (!newSequence) {
-            throw std::runtime_error("Memory allocation failed");
-        }
-        sequence = newSequence;
-
-        memcpy(sequence + len, marker.c_str(), marker_len);
-        sequence[len + marker_len] = '\0';
     }
     else {
         throw std::runtime_error("Unknown type in pushSequence");
     }
-    pkt.sequence = sequence;
 }
+#endif

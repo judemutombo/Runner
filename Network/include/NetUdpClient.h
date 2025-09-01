@@ -9,7 +9,7 @@ class NetUdpClient : public NetSocket{
 public:
     NetUdpClient(std::string host, std::string port, bool blocking);
     ~NetUdpClient();
-    bool send(const GamePacket& packet);
+    bool send(const packet& pkt);
     std::string generateId() override;
 private:
     bool isConnected;

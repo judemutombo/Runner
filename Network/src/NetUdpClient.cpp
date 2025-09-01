@@ -17,7 +17,7 @@ NetUdpClient::~NetUdpClient()
 #endif
 }
 
-bool NetUdpClient::send(const GamePacket& packet)
+bool NetUdpClient::send(const packet& pkt)
 {
     return false;
 }

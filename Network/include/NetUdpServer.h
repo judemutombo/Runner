@@ -19,6 +19,7 @@ public :
     void receiving(/* void(*fn)(std::string_view, std::string_view) */);
     bool isNewClient(const struct sockaddr_storage& newaddr);
     std::string generateId() override;
+    bool sendPacket(const packet& pkt, int socket) override;
 
 private:
     bool isBind;
