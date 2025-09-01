@@ -6,7 +6,7 @@ GamePacket::GamePacket() :
     pkt.itemCount = htons(itemCount);
 }
 
-GamePacket::GamePacket(const packet &p)
+GamePacket::GamePacket(const Packet &p)
 {
     pkt = p;
     itemCount = ntohs(p.itemCount);
@@ -30,12 +30,12 @@ void GamePacket::setMessageType(const char *messageType)
     memcpy(pkt.messageType, messageType, MAX_TYPE_SIZE);
 }
 
-packet GamePacket::getPacket()
+Packet GamePacket::getPacket()
 {
     return pkt;
 }
 
-void GamePacket::setPaket(const packet &p)
+void GamePacket::setPaket(const Packet &p)
 {
     pkt = p;
     itemCount = ntohs(p.itemCount);

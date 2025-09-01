@@ -1,8 +1,9 @@
 #include "../include/NetUdpServer.h"
 #include <random>
+#include "NetUdpServer.h"
 
-NetUdpServer::NetUdpServer(std::string_view host, std::string_view port, bool blocking) :
-    NetSocket(host, port, blocking, 2)
+NetUdpServer::NetUdpServer() :
+    NetSocket(2)
 {
     isBind = false;
     isListening = false;
@@ -16,13 +17,22 @@ NetUdpServer::NetUdpServer(std::string_view host, std::string_view port, bool bl
     isBind = true;    
 }
 
-void NetUdpServer::receiving(/* void(*fn)(std::string_view, std::string_view) */)
+bool NetUdpServer::open(std::string_view host, std::string_view port)
+{
+    setup(host, port);
+    if(_isConnected){
+        socket_thread = std::thread(&NetUdpServer::receive, this);
+    }
+    return _isConnected;
+}
+
+void NetUdpServer::receive()
 {
     if(!isBind){
         fprintf(stderr, "the socket was not binded");
         exit(EXIT_FAILURE);
     }
-    std::cout << "waiting for data to read to port : " << port << std::endl;
+    std::cout << "waiting for data to read to port : " << std::endl;
     addr_size = sizeof remote_addr;
     char message[BUFFSIZE];
     int numbytes;
@@ -88,7 +98,7 @@ std::string NetUdpServer::generateId()
     return res;
 }
 
-bool NetUdpServer::sendPacket(const packet& pkt, int socket)
+bool NetUdpServer::sendPacket(const Packet& pkt, int socket)
 {
     return false;
 }

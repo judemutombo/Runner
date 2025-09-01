@@ -12,11 +12,12 @@ file(GLOB NET_SOURCES  "./../Network/src/*.cpp" )
 
 file(GLOB NLOHMANN "externals/nlohmann" )
 include_directories(${NLOHMANN}) 
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../Signal/include)
 
 
 
 add_executable(miniserver ${SOURCES} ${NET_SOURCES})
+
 set_target_properties(miniserver PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/"
 )

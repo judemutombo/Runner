@@ -4,7 +4,7 @@
 
 Map::Map()
 {
-    load("resources/maps/kin.map");
+    load("ressources/maps/kin.map");
 }
 
 Map::~Map()
@@ -20,12 +20,12 @@ Map::~Map()
 void Map::load(std::string path)
 {
     
-    Image imgLV = LoadImage("resources/textures/road3.png");
-    Image imgLH = LoadImage("resources/textures/road5.png");
-    Image imgS = LoadImage("resources/textures/road4.png");
-    Image imgB = LoadImage("resources/textures/blocks.png");
-    Image imgV = LoadImage("resources/textures/void.png");
-    Image imgT = LoadImage("resources/textures/tree.png");
+    Image imgLV = LoadImage("ressources/textures/road3.png");
+    Image imgLH = LoadImage("ressources/textures/road5.png");
+    Image imgS = LoadImage("ressources/textures/road4.png");
+    Image imgB = LoadImage("ressources/textures/blocks.png");
+    Image imgV = LoadImage("ressources/textures/void.png");
+    Image imgT = LoadImage("ressources/textures/tree.png");
 
     linesv = LoadTextureFromImage(imgLV);
     linesh = LoadTextureFromImage(imgLH);

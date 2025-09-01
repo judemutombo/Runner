@@ -1,0 +1,8 @@
+{
+    "playerHost" : "localhost",
+    "playerPort" : "5010",
+    "miniHost" : "localhost",
+    "miniPort" : "5012",
+    "reserverdPort" : [ 5010, 5012],
+    "usedPort" : []
+}

@@ -1,13 +1,14 @@
 #include "raylib.h"
 #include "../includes/Game.h"
+#include "../includes/config.h"
 
 
 int main()
 {
     Color dark = {0, 0, 0, 255};
 
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+    const int screenWidth = SCREEN_WIDTH;
+    const int screenHeight = SCREEN_HEIGHT;
 
     Camera2D camera = { 0 };
 
@@ -20,22 +21,29 @@ int main()
     double previousTime = GetTime();    
     double currentTime = 0.0;    
     float deltaTime = 0.0f;  
+    
     while (!WindowShouldClose())
     {
         BeginDrawing();
             ClearBackground(dark);
-            BeginMode2D(camera);
-            game.handleInput();
-            game.display();
-            game.checkCollision();
-            EndMode2D();
+            if(game.is2D()){
+                BeginMode2D(camera);
+                game.handleInput();
+                game.display();
+                game.checkCollision();
+                EndMode2D();
+            }else{
+                game.handleInput();
+                game.display();
+                game.checkCollision();
+            }
         EndDrawing();
         
-        camera.target = game.target();
+        /* camera.target = game.target();
         currentTime = GetTime();
         deltaTime = (float)(currentTime - previousTime);
         previousTime = currentTime;
-        game.setDeltaTime(deltaTime);
+        game.setDeltaTime(deltaTime); */
     }
 
     CloseWindow();

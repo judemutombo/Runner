@@ -10,7 +10,7 @@ Car::Car( Vector2 position, const  std::shared_ptr<Map>& m, int choice) :
 
     std::stringstream ss;
 
-    ss << "resources/textures/cars" << std::to_string(choice) << ".png";
+    ss << "ressources/textures/cars" << std::to_string(choice) << ".png";
     
     Image image = LoadImage(ss.str().c_str());
     texture = LoadTextureFromImage(image);

@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <cstdint>
 #ifndef CONFIG_H
 #define CONFIG_H
 

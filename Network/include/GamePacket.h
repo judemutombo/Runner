@@ -23,12 +23,12 @@ class GamePacket
 {
 public:
     GamePacket();
-    GamePacket(const packet& p);
+    GamePacket(const Packet& p);
     ~GamePacket();
     void setSenderID(const char* senderId);
     void setMessageType(const char* messageType);
-    packet getPacket();
-    void setPaket(const packet& p);
+    Packet getPacket();
+    void setPaket(const Packet& p);
     template<typename T> void push(const T& value);
     void push(const char* str);
     void push(const std::string& str);
@@ -37,7 +37,7 @@ public:
     std::string getTypeSequence();
     
 private:
-    packet pkt;
+    Packet pkt;
     uint32_t floatToNet(float f);
     float netToFloat(uint32_t i);
     uint64_t doubleToNet(double d);

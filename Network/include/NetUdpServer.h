@@ -15,16 +15,18 @@ typedef struct {
 
 class NetUdpServer : public NetSocket{
 public :
-    NetUdpServer(std::string_view host, std::string_view port, bool blocking);
-    void receiving(/* void(*fn)(std::string_view, std::string_view) */);
+    NetUdpServer();
+    bool open(std::string_view host, std::string_view port);
     bool isNewClient(const struct sockaddr_storage& newaddr);
     std::string generateId() override;
-    bool sendPacket(const packet& pkt, int socket) override;
+    bool sendPacket(const Packet& pkt, int socket) override;
 
 private:
     bool isBind;
     bool isListening; 
     std::vector<ClientInfo> clients;
+    
+    void receive();
 };
 
 

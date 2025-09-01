@@ -3,7 +3,7 @@
 #include <cmath>
 CollisionManager::CollisionManager()
 {
-
+    
 }
 
 void CollisionManager::checkCollision(std::vector<Racer*> &racers, const std::shared_ptr<Map> &m)

@@ -7,8 +7,6 @@
 #include "Map.h"
 #include <memory>
 #include <string_view>
-#include "../../Network/include/NetUdpClient.h"
-#include "../../Network/include/packet.h"
 
 
 class Racer{
@@ -31,7 +29,6 @@ protected:
     std::shared_ptr<Map> map;
     bool isColliding;
     std::string id;
-    NetUdpClient client;
 };
 
 #endif // RACER_H

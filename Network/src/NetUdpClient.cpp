@@ -2,10 +2,10 @@
 
 
 
-NetUdpClient::NetUdpClient(std::string host, std::string port, bool blocking) :
-    NetSocket(host, port, blocking, 2)
+NetUdpClient::NetUdpClient() :
+    NetSocket(2)
 {
-    isConnected = false;
+    
 }
 
 NetUdpClient::~NetUdpClient()
@@ -17,7 +17,7 @@ NetUdpClient::~NetUdpClient()
 #endif
 }
 
-bool NetUdpClient::send(const packet& pkt)
+bool NetUdpClient::send(const Packet& pkt)
 {
     return false;
 }

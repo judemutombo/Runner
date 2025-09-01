@@ -6,24 +6,29 @@
 #include <string_view>
 #include <iostream>
 #include <string.h>
-#include <functional>
+#include <thread>
 
 #define BACKLOG 6
 
 class NetTcpServer : public NetSocket{
 public :
-    NetTcpServer(std::string_view host, std::string_view port, bool blocking);
-    bool listening();
-    void accepting(const std::function<void(int)>& callback);
+    NetTcpServer();
+    ~NetTcpServer();
+    bool startListening(std::string_view host, std::string_view port);
+    bool isListening() const;
     void setAcceptingClient(int value);
     std::string generateId() override;
-    bool sendPacket(const packet& pkt, int socket) override;
+    bool sendPacket(const Packet& pkt, int socket) override;
 
+    Signal<int> incomingConnection;
 private:
     bool isBind;
-    bool isListening; 
+    bool _isListening; 
     int acceptingClient;
     std::vector<int> clients;
+    std::thread socket_accepting_thread;
+    
+    void accepting();
 };
 
 

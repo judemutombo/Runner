@@ -1,9 +1,59 @@
 #include "../include/NetSocket.h"
 #include <string.h>
+#include "NetSocket.h"
 
-NetSocket::NetSocket(std::string_view host, std::string_view port, bool blocking, int type) :
-    host(host), port(port), blocking(blocking), type(type)
+NetSocket::NetSocket(int type) :
+    blocking(true), type(type)
 {
+
+}
+
+NetSocket::~NetSocket()
+{    
+    freeaddrinfo(res);
+}
+
+void *NetSocket::get_in_addr(sockaddr *sa)
+{
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
+    }
+        return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
+int NetSocket::getSocketDescriptor()
+{
+    return sockfd;
+}
+
+bool NetSocket::isConnected()
+{
+    return _isConnected;
+}
+
+bool NetSocket::setBlocking(bool b)
+{   
+    if(!b){
+        #ifdef _WIN32  
+            u_long mode = 1;
+            if (ioctlsocket(sockfd, FIONBIO, &mode) != 0) {
+                printf("Failed to set non-blocking mode: %d\n", WSAGetLastError());
+                blocking = true; 
+            }else{
+                blocking = false;
+            }
+        #else
+            fcntl(sockfd, F_SETFL, O_NONBLOCK);
+            blocking = false;
+        #endif
+    }
+
+    return blocking;
+}
+
+void NetSocket::setup(std::string_view host, std::string_view port)
+{
+
 #ifdef _WIN32
     WSADATA wsaData;
 
@@ -36,39 +86,9 @@ NetSocket::NetSocket(std::string_view host, std::string_view port, bool blocking
     
     if(sockfd == -1 ){
         perror("unable to get socket\n");
+        _isConnected = false;
         exit(EXIT_FAILURE);
     }
-    
-    if(blocking){
-        #ifdef _WIN32  
-            u_long mode = 1;
-            if (ioctlsocket(sockfd, FIONBIO, &mode) != 0) {
-                printf("Failed to set non-blocking mode: %d\n", WSAGetLastError());
-                closesocket(sockfd);
-                WSACleanup();
-                exit(EXIT_FAILURE);
-            }
-        #else
-            fcntl(sockfd, F_SETFL, O_NONBLOCK);
-        #endif
-    }
+    _isConnected = true;
 
-}
-
-NetSocket::~NetSocket()
-{    
-    freeaddrinfo(res);
-}
-
-void *NetSocket::get_in_addr(sockaddr *sa)
-{
-    if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in*)sa)->sin_addr);
-    }
-        return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
-
-int NetSocket::getSocketDescriptor()
-{
-    return sockfd;
 }

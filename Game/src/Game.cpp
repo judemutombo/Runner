@@ -1,16 +1,21 @@
 #include "../includes/Game.h"
 #include <iostream>
-Game::Game()
-{
-    map = std::make_shared<Map>();
-   
 
+
+Game::Game() : onGoing(false), pause(false)
+{
+    gui = new Gui();
+    gui->setOngoing(onGoing);
+    gui->setPause(pause);
+
+    gui->onRequestPartyTriggered.connect(this, &Game::requestParty);
+    /* map = std::make_shared<Map>();
     std::vector<Vector2> poss = map.get()->getStartingPosition();
     Vector2 playerstartpos = poss[0];
     playerstartpos.x *= 100;
     playerstartpos.y *= 100 + 25;
 
-    racers.push_back(new Player(playerstartpos, map, 7));
+    racers.push_back(new Player(playerstartpos, map, 7)); */
 
   /*   for(int i = 1; i < poss.size(); i++){
         Vector2 playerstartpos = poss[i];
@@ -29,14 +34,19 @@ Game::~Game()
         delete racer;
     }
     racers.clear();
+    delete gui;
 }
 
 void Game::display()
 {
-    map->draw();
-    for(auto racer : racers){
-        racer->draw(deltaTime);
+    if(onGoing){
+        map->draw();
+        for(auto racer : racers){
+            racer->draw(deltaTime);
+        }
     }
+
+    gui->draw();
 }
 
 void Game::handleInput()
@@ -74,4 +84,13 @@ void Game::setDeltaTime(float t)
 void Game::checkCollision()
 {
     collisionManager.checkCollision(racers, map);
+}
+
+bool Game::is2D(){
+    return onGoing || pause;
+}
+
+void Game::requestParty(bool)
+{
+   
 }

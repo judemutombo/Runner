@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "AI.h"
+#include "Gui.h"
 
 class Game{
 public:
@@ -22,12 +23,9 @@ public:
     Vector2 target();
     void setDeltaTime(float t);
     void checkCollision();
+    bool is2D();
 private:
-    // void drawMenu();
-    // void drawPause();
-    // void newGame();
-    // void quitGame();
-    // void win();
+    void requestParty(bool);
     
     bool won = false;
     bool onGoing = false;
@@ -38,6 +36,7 @@ private:
     float deltaTime;
     std::vector<Racer*> racers;
     CollisionManager collisionManager;
+    Gui* gui;
 };
 
 

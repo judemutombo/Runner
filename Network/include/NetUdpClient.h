@@ -1,5 +1,5 @@
-#ifndef NetClient_H
-#define NetClient_H
+#ifndef NETUPDCLIENT_H
+#define NETUPDCLIENT_H
 
 #include "NetSocket.h"
 #include "GamePacket.h"
@@ -7,14 +7,13 @@
 class NetUdpClient : public NetSocket{
 
 public:
-    NetUdpClient(std::string host, std::string port, bool blocking);
+    NetUdpClient();
     ~NetUdpClient();
-    bool send(const packet& pkt);
+    bool send(const Packet& pkt);
     std::string generateId() override;
 private:
-    bool isConnected;
     char userInput[BUFFSIZE];
     char messages[BUFFSIZE];
 };
 
-#endif // NetClient_H
+#endif // NETUPDCLIENT_H
